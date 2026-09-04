@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Goldrausch - Unüberwachtes Lernen</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="app-header">
+  <h1>⛏️ Goldrausch</h1>
+  <p class="subtitle">Findet die besten Grabungsorte, bevor euch das Kartenglück verlässt!</p>
+</header>
+
+<main class="layout">
+  <!-- Spielfeld: Wüstenkarte mit Raster, Fähnchen und Goldmarkierungen -->
+  <section class="board-wrap">
+    <div id="board" class="board">
+      <img src="assets/map.png" alt="Wüstenkarte" id="mapImage" draggable="false">
+      <div id="grid" class="grid-overlay"></div>
+      <div id="markerLayer" class="marker-layer"></div>
+    </div>
+    <div id="flagTray" class="flag-tray">
+      <span class="tray-label">Fähnchen (ziehen &amp; ablegen):</span>
+      <div id="flagPool" class="flag-pool"></div>
+    </div>
+  </section>
+
+  <!-- Bedienpanel: Kartenstapel, aktuelle Karte, Aktionen, Auswertung -->
+  <aside class="side-panel">
+    <div class="panel-block">
+      <h2>Kartenstapel</h2>
+      <div id="deckStack" class="deck-stack" title="Klicken, um die nächste Karte aufzudecken">
+        <div class="card card-back">🂠</div>
+        <div id="deckCount" class="deck-count">0 / 0</div>
+      </div>
+      <div id="currentCard" class="current-card" hidden>
+        <div class="card card-face">
+          <div class="nugget"><img src="assets/gold_icon.png" alt="Gold"></div>
+          <div class="coords"><span>X: <b id="cardX">-</b></span><span>Y: <b id="cardY">-</b></span></div>
+        </div>
+      </div>
+      <p class="hint">Karten dürfen nicht notiert werden - merkt euch das Muster!</p>
+    </div>
+
+    <div class="panel-block">
+      <h2>Aktionen</h2>
+      <button id="loginBtn" class="btn btn-primary" disabled>Lösung einloggen</button>
+      <button id="newGameBtn" class="btn">Neues Spiel</button>
+    </div>
+
+    <div id="resultBlock" class="panel-block result-block" hidden>
+      <h2>Auswertung</h2>
+      <ul id="flagScores" class="flag-scores"></ul>
+      <p class="total-score">Gesamtpunktzahl: <b id="totalScore">0</b> / <b id="maxScore">0</b> (<span id="totalPercent">0</span>%)</p>
+    </div>
+  </aside>
+</main>
+
+<script src="game.js"></script>
+</body>
+</html>
