@@ -53,6 +53,19 @@ body {
   inset: 0;
   pointer-events: none;
 }
+.grid-overlay.drop-preview {
+  left: calc(var(--grid-left) + (var(--preview-x) - 0.5) * var(--cell-w));
+  top: calc(var(--grid-top) + (var(--preview-y) - 0.5) * var(--cell-h));
+  width: var(--cell-w);
+  height: var(--cell-h);
+  inset: auto;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 215, 0, 0.38);
+  border: 2px solid #ffe27a;
+  border-radius: 3px;
+  box-shadow: 0 0 0 2px rgba(122, 77, 16, 0.7), 0 0 12px rgba(255, 215, 0, 0.8);
+  z-index: 8;
+}
 .grid-cell {
   position: absolute;
   border: 1px solid transparent;
@@ -84,9 +97,13 @@ body {
   z-index: 10;
   pointer-events: auto;
   user-select: none;
+  touch-action: none;
   filter: drop-shadow(0 2px 2px rgba(0,0,0,0.6));
 }
 .flag:active { cursor: grabbing; }
+.flag.selected {
+  filter: drop-shadow(0 0 5px #ffe27a) drop-shadow(0 2px 2px rgba(0,0,0,0.6));
+}
 
 .flag-tray {
   margin-top: 0.6rem;
@@ -95,10 +112,11 @@ body {
   padding: 0.5rem 0.8rem;
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.8rem;
 }
 .tray-label { font-size: 0.9rem; color: #d8c39f; }
-.flag-pool { display: flex; gap: 0.6rem; min-height: 2.2rem; }
+.flag-pool { display: flex; flex-wrap: wrap; gap: 0.6rem; min-height: 2.2rem; }
 /* Fähnchen im Vorrat müssen aus dem Flex-Fluss der absoluten Kartenpositionierung gelöst werden */
 .flag-pool .flag {
   position: static !important;
@@ -174,3 +192,22 @@ body {
 .result-block .flag-scores { list-style: none; padding: 0; margin: 0 0 0.5rem; }
 .result-block .flag-scores li { padding: 0.15rem 0; font-size: 0.9rem; }
 .total-score { font-size: 1rem; margin: 0; }
+
+/* Im iPad-Bereich schrumpft das Spielfeld, damit das Bedienpanel daneben bleibt. */
+@media (min-width: 701px) and (max-width: 900px) {
+  .board-wrap { flex: 1 1 0; min-width: 0; }
+}
+
+/* Im Hochformat bekommt die Karte die volle Breite; das Bedienpanel folgt darunter. */
+@media (orientation: portrait) and (min-width: 701px) {
+  .layout { display: block; }
+  .board-wrap { width: 100%; }
+  .side-panel { width: 100%; margin-top: 1.2rem; }
+}
+
+/* Erst auf sehr schmalen Displays stapeln sich Spielfeld und Bedienpanel. */
+@media (max-width: 700px) {
+  .layout { padding: 0.7rem; }
+  .board-wrap { flex-basis: 100%; min-width: 0; }
+  .side-panel { flex-basis: 100%; }
+}

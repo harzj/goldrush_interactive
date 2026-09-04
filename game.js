@@ -20,6 +20,7 @@ const ORIGINAL_GOLD = [
 
 // --- DOM-Referenzen ---
 const boardEl = document.getElementById("board");
+const gridEl = document.getElementById("grid");
 const markerLayer = document.getElementById("markerLayer");
 const flagPool = document.getElementById("flagPool");
 const flagTray = document.getElementById("flagTray");
@@ -43,6 +44,34 @@ let deckIndex = 0;
 let tempGoldMarkerEl = null;   // temporär sichtbarer Fund (verschwindet bei nächster Karte)
 let flags = [];         // {id, el, x|null, y|null}
 let locked = false;     // true nach "Einloggen", bis neues Spiel gestartet wird
+let selectedFlag = null; // ausgewähltes Fähnchen für die Touch-Bedienung
+let isDragging = false;
+let previewCell = null;
+
+// Hebt das Rasterfeld hervor, das beim Ziehen oder nach der Auswahl getroffen wird.
+function showDropPreview(grid) {
+  if (!grid) {
+    gridEl.classList.remove("drop-preview");
+    previewCell = null;
+    return;
+  }
+  const pos = cellCenterPercent(grid.x, grid.y);
+  gridEl.classList.add("drop-preview");
+  gridEl.style.left = pos.left + "%";
+  gridEl.style.top = pos.top + "%";
+  previewCell = grid;
+}
+
+function selectFlag(flag) {
+  if (selectedFlag) selectedFlag.el.classList.remove("selected");
+  selectedFlag = selectedFlag === flag ? null : flag;
+  if (selectedFlag) {
+    selectedFlag.el.classList.add("selected");
+    showDropPreview(previewCell);
+  } else {
+    showDropPreview(null);
+  }
+}
 
 // --- Hilfsfunktionen: Koordinaten <-> Prozentpositionen ---
 function cellCenterPercent(x, y) {
@@ -127,6 +156,14 @@ function attachDragHandlers(flag) {
   flag.el.addEventListener("pointerdown", (e) => {
     if (locked) return;
     e.preventDefault();
+    // Auf Touch-Geräten genügt ein Antippen zur Auswahl; das nächste Antippen
+    // auf dem Spielfeld setzt das Fähnchen an dieser Stelle ab.
+    if (e.pointerType === "touch") {
+      selectFlag(flag);
+      return;
+    }
+    isDragging = true;
+    selectFlag(flag);
     flag.el.setPointerCapture(e.pointerId);
     flag.el.style.position = "fixed";
     flag.el.style.zIndex = "1000";
@@ -138,16 +175,29 @@ function attachDragHandlers(flag) {
     const onMove = (ev) => {
       flag.el.style.left = ev.clientX + "px";
       flag.el.style.top = ev.clientY + "px";
+      showDropPreview(pointToGrid(ev.clientX, ev.clientY));
     };
     const onUp = (ev) => {
       document.removeEventListener("pointermove", onMove);
       document.removeEventListener("pointerup", onUp);
+      isDragging = false;
       placeFlagFromPointer(flag, ev.clientX, ev.clientY);
     };
     document.addEventListener("pointermove", onMove);
     document.addEventListener("pointerup", onUp);
   });
 }
+
+boardEl.addEventListener("pointermove", (e) => {
+  if (selectedFlag) showDropPreview(pointToGrid(e.clientX, e.clientY));
+});
+
+boardEl.addEventListener("pointerup", (e) => {
+  if (locked || isDragging || !selectedFlag) return;
+  const flag = selectedFlag;
+  const grid = pointToGrid(e.clientX, e.clientY);
+  if (grid) placeFlagFromPointer(flag, e.clientX, e.clientY);
+});
 
 function placeFlagFromPointer(flag, clientX, clientY) {
   const grid = pointToGrid(clientX, clientY);
@@ -160,6 +210,7 @@ function placeFlagFromPointer(flag, clientX, clientY) {
     flag.el.style.left = pos.left + "%";
     flag.el.style.top = pos.top + "%";
     markerLayer.appendChild(flag.el);
+    if (selectedFlag === flag) selectFlag(flag);
   } else {
     // außerhalb des Spielfelds abgelegt -> zurück in den Vorrat
     flag.x = null;
@@ -170,7 +221,9 @@ function placeFlagFromPointer(flag, clientX, clientY) {
     flag.el.style.top = "";
     flag.el.style.transform = "none";
     flagPool.appendChild(flag.el);
+    if (selectedFlag === flag) selectFlag(flag);
   }
+  showDropPreview(null);
 }
 
 // --- Punkteberechnung ---
@@ -296,6 +349,9 @@ function initGame(gold) {
   resultBlock.hidden = true;
 
   createFlagElements();
+  selectedFlag = null;
+  isDragging = false;
+  showDropPreview(null);
 }
 
 newGameBtn.addEventListener("click", () => {
