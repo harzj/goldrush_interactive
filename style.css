@@ -27,6 +27,42 @@ body {
 .app-header h1 { margin: 0; }
 .subtitle { margin: 0.2rem 0 0; color: #d8c39f; font-size: 0.95rem; }
 
+/* Regel-Popup erscheint über dem Spiel und nimmt im Seitenfluss keinen Platz ein. */
+.rules-dialog {
+  position: fixed;
+  inset: 50% auto auto 50%;
+  width: min(680px, calc(100vw - 2rem));
+  max-height: min(680px, calc(100vh - 2rem));
+  margin: auto;
+  padding: 1.25rem;
+  transform: translate(-50%, -50%);
+  color: #f2e6d5;
+  background: #3a2819;
+  border: 1px solid #d8a24a;
+  border-radius: 8px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.7);
+  z-index: 100;
+}
+.rules-dialog h2 { margin: 0 0 0.7rem; color: #e9c98a; }
+.rules-dialog ol {
+  margin: 0 0 1rem;
+  padding-left: 1.35rem;
+  line-height: 1.45;
+  color: #d8c39f;
+}
+.rules-dialog li + li { margin-top: 0.45rem; }
+.rules-btn {
+  margin-top: 0.5rem;
+  padding: 0.3rem 0.65rem;
+  color: #f2e6d5;
+  background: transparent;
+  border: 1px solid #d8a24a;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.rules-btn:hover { background: rgba(216, 162, 74, 0.18); }
+.rules-close-btn { margin: 0; }
+
 .layout {
   display: flex;
   gap: 1.2rem;

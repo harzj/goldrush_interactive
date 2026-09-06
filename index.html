@@ -10,7 +10,23 @@
 <header class="app-header">
   <h1>⛏️ Goldrausch</h1>
   <p class="subtitle">Findet die besten Grabungsorte, bevor euch das Kartenglück verlässt!</p>
+  <!-- Öffnet die Regeln erneut, nachdem das Start-Popup geschlossen wurde. -->
+  <button id="rulesBtn" class="rules-btn" type="button" onclick="document.getElementById('rulesDialog').show()">Spielregeln</button>
 </header>
+
+<!-- Start-Popup mit den Regeln, ohne dauerhaften Platz im Spiellayout zu belegen. -->
+<dialog id="rulesDialog" class="rules-dialog" aria-labelledby="rulesTitle" open>
+  <h2 id="rulesTitle">Euer Auftrag</h2>
+  <ol>
+    <li>Auf dieser Karte wurden wiederholt Goldfunde gemeldet. Ihr seid ein dreiköpfiges Grabungsteam.</li>
+    <li>Legt die drei Fähnchen als eure Grabungsorte fest und passt sie jederzeit an.</li>
+    <li>Deckt die Fundkarten nacheinander auf: Wo Gold gefunden wurde, liegt oft weiteres Gold in der Nähe.</li>
+    <li>Notizen und Merken sind tabu: Reagiert sofort auf jede Karte, indem ihr eure Grabungsorte anpasst.</li>
+    <li>Entwickelt eine Strategie für möglichst viele Punkte. Die erste Runde ist fest vorgegeben, spätere Runden sind zufällig.</li>
+  </ol>
+  <!-- Schließt das Regel-Popup und gibt den Blick auf das Spiel frei. -->
+  <button id="closeRulesBtn" class="btn btn-primary rules-close-btn" type="button" onclick="document.getElementById('rulesDialog').close()">Los geht's</button>
+</dialog>
 
 <main class="layout">
   <!-- Spielfeld: Wüstenkarte mit Raster, Fähnchen und Goldmarkierungen -->
@@ -40,7 +56,8 @@
           <div class="coords"><span>X: <b id="cardX">-</b></span><span>Y: <b id="cardY">-</b></span></div>
         </div>
       </div>
-      <p class="hint">Karten dürfen nicht notiert werden - merkt euch das Muster!</p>
+      <!-- Der Hinweis erinnert an die direkte Verarbeitung statt an das Auswendiglernen. -->
+      <p class="hint">Keine Notizen, nicht merken: Passt eure Grabungsorte direkt nach jeder Karte an.</p>
     </div>
 
     <div class="panel-block">
